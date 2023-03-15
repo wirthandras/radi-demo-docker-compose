@@ -1,28 +1,32 @@
 version: '3'
 services:
   frontend:
-    image: wirthandras/radi-demo-frontend
-    env_file:
-    - ./environment
+    image: wirthandras/radi-demo-frontend:master
     restart: always
     depends_on:
     - backend
     ports:
       - "40050:80"
   backend:
-    image: wirthandras/radi-demo-backend
-    env_file:
-    - ./environment
+    image: wirthandras/radi-demo-backend:master
     restart: always
     depends_on:
     - database
+    ports:
+      - "40052:80"
+    environment:
+      ConnectionStrings__SampleDbConnection: "User ID =useroverrideit;Password=overrideit;Host=database;Port=5432;Database=radidb; Integrated Security=true;Pooling=true;"
   database:
     image: postgres:15-alpine
-    env_file:
-    - ./environment
+    environment:
+        POSTGRES_PASSWORD: overrideit
+        POSTGRES_USER: useroverrideit
+        POSTGRES_DATABASE: radidb
+        POSTGRES_HOST: database
+        POSTGRES_PORT: 5432
     restart: always
     ports:
-      - "5432:5432"
+      - "40053:5432"
   pgadmin:
     image: dpage/pgadmin4
     restart: always
@@ -31,5 +35,5 @@ services:
     ports:
       - "40051:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: example@email.com
-      PGADMIN_DEFAULT_PASSWORD: example_password
+        PGADMIN_DEFAULT_EMAIL: test@test.com
+        PGADMIN_DEFAULT_PASSWORD: admin
